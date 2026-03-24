@@ -1,4 +1,4 @@
-# DOKUMENT PROJEKTU
+# Design Proposal
 
 Autorzy:
 
@@ -12,7 +12,7 @@ Autorzy:
 3. [Cel projektu](#3-cel-projektu)
 4. [Metody i narzędzia](#4-metody-i-narzędzia)
 5. [Zestaw danych](#5-zestaw-danych)
-6. [Metryki oceny stabilności](#6-metryki-oceny-stabilności)
+6. [Metryki oceny](#6-metryki-oceny)
 7. [Plan pracy](#7-plan-pracy)
 8. [Analiza ryzyka](#8-analiza-ryzyka)
 9. [Podsumowanie](#9-podsumowanie)
@@ -70,7 +70,6 @@ Celem projektu jest zbadanie i kwantyfikacja wpływu różnych strategii prompto
 ### 3.3 Kryteria sukcesu
 
 - Opracowanie działającego pipeline'u badawczego
-- Przeprowadzenie min. 500 eksperymentów
 - Wykazanie istotności statystycznej dla hipotezy głównej
 - Dokumentacja wyników w formie raportu
 
@@ -88,29 +87,29 @@ Celem projektu jest zbadanie i kwantyfikacja wpływu różnych strategii prompto
 
 ### 4.3 Główne biblioteki
 
-| Biblioteka | Wersja | Zastosowanie |
-|------------|--------|--------------|
-| `transformers` | 4.40+ | Ładowanie i inferencja modeli |
-| `torch` | 2.3+ | Framework głębokiego uczenia |
-| `openai` | 1.0+ | API dla ChatGPT |
-| `ollama` | 0.1+ | Lokalna inferencja modeli open-source |
-| `pandas` | 2.2+ | Analiza danych |
-| `numpy` | 1.26+ | Operacje numeryczne |
-| `scipy` | 1.13+ | Testy statystyczne |
-| `scikit-learn` | 1.5+ | Metryki powtarzalności |
-| `sentence-transformers` | 2.5+ | Embeddingi semantyczne |
-| `matplotlib` / `seaborn` | najnowsza | Wizualizacja wyników |
-| `pytest` | 8+ | Testy jednostkowe |
-| `black` | najnowsza | Formatowanie kodu |
-| `ruff` | najnowsza | Linting |
+| Biblioteka               | Wersja    | Zastosowanie                          |
+| ------------------------ | --------- | ------------------------------------- |
+| `transformers`           | 4.40+     | Ładowanie i inferencja modeli         |
+| `torch`                  | 2.3+      | Framework głębokiego uczenia          |
+| `openai`                 | 1.0+      | API dla ChatGPT                       |
+| `ollama`                 | 0.1+      | Lokalna inferencja modeli open-source |
+| `pandas`                 | 2.2+      | Analiza danych                        |
+| `numpy`                  | 1.26+     | Operacje numeryczne                   |
+| `scipy`                  | 1.13+     | Testy statystyczne                    |
+| `scikit-learn`           | 1.5+      | Metryki powtarzalności                |
+| `sentence-transformers`  | 2.5+      | Embeddingi semantyczne                |
+| `matplotlib` / `seaborn` | najnowsza | Wizualizacja wyników                  |
+| `pytest`                 | 8+        | Testy jednostkowe                     |
+| `black`                  | najnowsza | Formatowanie kodu                     |
+| `ruff`                   | najnowsza | Linting                               |
 
 ### 4.4 Modele językowe
 
-| Model | Parametry | Licencja | Uwagi |
-|-------|-----------|----------|-------|
-| **ChatGPT (GPT-3.5-turbo)** | ~175B | OpenAI Terms | Najpopularniejszy model |
-| **Mistral 7B Instruct** | 7B | Apache 2.0 | Wysoka wydajność |
-| **Llama 3.1 8B Instruct** | 8B | Llama 3.1 | Duża społeczność |
+| Model                       | Parametry | Licencja     | Uwagi                   |
+| --------------------------- | --------- | ------------ | ----------------------- |
+| **ChatGPT (GPT-3.5-turbo)** | ~175B     | OpenAI Terms | Najpopularniejszy model |
+| **Mistral 7B Instruct**     | 7B        | Apache 2.0   | Wysoka wydajność        |
+| **Llama 3.1 8B Instruct**   | 8B        | Llama 3.1    | Duża społeczność        |
 
 ---
 
@@ -120,13 +119,13 @@ Celem projektu jest zbadanie i kwantyfikacja wpływu różnych strategii prompto
 
 Wykorzystujemy **BFI-10 (Big Five Inventory - 10 item)** - skróconą wersję narzędzia do pomiaru Wielkiej Piątki cech osobowości.
 
-| Wymiar | Pozycje | Przykładowe stwierdzenie |
-|--------|---------|--------------------------|
-| Ekstrawersja | 2 | "I see myself as someone who is talkative..." |
-| Ugodowość | 2 | "I see myself as someone who has a forgiving nature" |
-| Sumienność | 2 | "I see myself as someone who does a thorough job" |
-| Neurotyzm | 2 | "I see myself as someone who can be moody" |
-| Otwartość | 2 | "I see myself as someone who is original..." |
+| Wymiar       | Pozycje | Przykładowe stwierdzenie                             |
+| ------------ | ------- | ---------------------------------------------------- |
+| Ekstrawersja | 2       | "I see myself as someone who is talkative..."        |
+| Ugodowość    | 2       | "I see myself as someone who has a forgiving nature" |
+| Sumienność   | 2       | "I see myself as someone who does a thorough job"    |
+| Neurotyzm    | 2       | "I see myself as someone who can be moody"           |
+| Otwartość    | 2       | "I see myself as someone who is original..."         |
 
 **Skala Likerta 1-5:** Disagree strongly → Agree strongly
 
@@ -148,8 +147,6 @@ Parametry zmienne:
 - PromptType ∈ {baseline, few_shot, format_constrained}
 - repetitions ∈ {10}
 ```
-
-**Liczba eksperymentów:** 3 × 3 × 10 = 90 serii (900 odpowiedzi)
 
 ### 5.3 Przykładowe prompty
 
@@ -210,23 +207,30 @@ Format: "1,2,3,4,5,6,7,8,9,10"
 
 ---
 
-## 6. Metryki oceny stabilności
+## 6. Metryki oceny
 
-### 6.1 Metryki podstawowe
+### 6.1 Metryki stabilności
 
-| Metryka | Opis |
-|---------|------|
-| **Fleiss' κ** | Zgodność między powtórzeniami. Zakres: -1 do 1 (1 = pełna zgodność) |
-| **Alpha Krippendorffa** | Uogólnienie kappa dla dowolnej liczby powtórzeń |
-| **Entropia Shannona** | Miara niepewności. Niższa = wyższa stabilność |
-| **Odchylenie standardowe** | Niższe = wyższa stabilność |
+| Metryka                    | Opis                                                                |
+| -------------------------- | ------------------------------------------------------------------- |
+| **Fleiss' κ**              | Zgodność między powtórzeniami. Zakres: -1 do 1 (1 = pełna zgodność) |
+| **Alpha Krippendorffa**    | Uogólnienie kappa dla dowolnej liczby powtórzeń                     |
+| **Entropia Shannona**      | Miara niepewności. Niższa = wyższa stabilność                       |
+| **Odchylenie standardowe** | Niższe = wyższa stabilność                                          |
 
 ### 6.2 Metryki semantyczne
 
-| Metryka | Opis |
-|---------|------|
-| **Cosine Similarity** | Porównanie semantycznego podobieństwa odpowiedzi |
-| **Levenshtein Distance** | Odległość edycyjna między odpowiedziami |
+| Metryka                  | Opis                                             |
+| ------------------------ | ------------------------------------------------ |
+| **Cosine Similarity**    | Porównanie semantycznego podobieństwa odpowiedzi |
+| **Levenshtein Distance** | Odległość edycyjna między odpowiedziami          |
+
+### 6.3 Metryki odzwierciedlania osobowości
+
+Dodatkowo badamy, czy modele poprawnie odzwierciedlają przypisaną im osobowość. Proces:
+
+1. Przypisanie modelowi określonego profilu osobowości (np. "wysoka ekstrawersja, niski neurotyzm")
+2. Porównanie wyników BFI-10 z oczekiwanym profilem
 
 ---
 
@@ -234,103 +238,103 @@ Format: "1,2,3,4,5,6,7,8,9,10"
 
 ### 7.1 Tabela przeglądowa
 
-| Tydzień | Daty | Główne zadania | Osoba |
-|---------|------|-----------------|-------|
-| 1 | 30.03 - 05.04 | Setup, prompty, BFI-10 | Filip + Dawid |
-| 2 | 06.04 - 12.04 | Pipeline modeli + testy | Filip + Dawid |
-| 3 | 13.04 - 19.04 | Pipeline metryk + testy | Filip + Dawid |
-| 4 | 20.04 - 26.04 | Eksperymenty + metryki | Filip + Dawid |
-| 5 | 27.04 - 03.05 | Eksperymenty + konsolidacja | Filip + Dawid |
-| 6 | 04.05 - 10.05 | Analiza + wykresy | Filip + Dawid |
-| 7 | 11.05 - 17.05 | Dokumentacja | Filip + Dawid |
-| 8 | 18.05 - 21.05 | Prezentacja | Filip + Dawid |
+| Tydzień | Daty          | Główne zadania              | Osoba         |
+| ------- | ------------- | --------------------------- | ------------- |
+| 1       | 30.03 - 05.04 | Setup, prompty, BFI-10      | Filip + Dawid |
+| 2       | 06.04 - 12.04 | Pipeline modeli + testy     | Filip + Dawid |
+| 3       | 13.04 - 19.04 | Pipeline metryk + testy     | Filip + Dawid |
+| 4       | 20.04 - 26.04 | Eksperymenty + metryki      | Filip + Dawid |
+| 5       | 27.04 - 03.05 | Eksperymenty + konsolidacja | Filip + Dawid |
+| 6       | 04.05 - 10.05 | Analiza + wykresy           | Filip + Dawid |
+| 7       | 11.05 - 17.05 | Dokumentacja                | Filip + Dawid |
+| 8       | 18.05 - 21.05 | Prezentacja                 | Filip + Dawid |
 
 ### 7.2 Szczegółowy podział
 
 #### Tydzień 1: Setup
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 1.1 | Repozytorium, uv, black, ruff, pytest | Filip |
-| 1.2 | Kwestionariusz BFI-10 | Dawid |
-| 1.3 | Szablony promptów | Dawid |
-| 1.4 | Schemat zbierania danych | Filip |
+| Zadanie | Opis                                  | Osoba |
+| ------- | ------------------------------------- | ----- |
+| 1.1     | Repozytorium, uv, black, ruff, pytest | Filip |
+| 1.2     | Kwestionariusz BFI-10                 | Dawid |
+| 1.3     | Szablony promptów                     | Dawid |
+| 1.4     | Schemat zbierania danych              | Filip |
 
 #### Tydzień 2: Pipeline modeli
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 2.1 | Moduł ładowania modeli | Filip |
-| 2.2 | Moduł inferencji | Dawid |
-| 2.3 | ExperimentRunner | Filip |
-| 2.4 | Testy jednostkowe | Dawid |
+| Zadanie | Opis                   | Osoba |
+| ------- | ---------------------- | ----- |
+| 2.1     | Moduł ładowania modeli | Filip |
+| 2.2     | Moduł inferencji       | Dawid |
+| 2.3     | ExperimentRunner       | Filip |
+| 2.4     | Testy jednostkowe      | Dawid |
 
 #### Tydzień 3: Pipeline metryk
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 3.1 | Moduł metryk stabilności | Dawid |
-| 3.2 | Integracja z pipeline | Filip |
-| 3.3 | Testy jednostkowe metryk | Dawid |
-| 3.4 | Walidacja na małej próbce | Filip |
+| Zadanie | Opis                      | Osoba |
+| ------- | ------------------------- | ----- |
+| 3.1     | Moduł metryk stabilności  | Dawid |
+| 3.2     | Integracja z pipeline     | Filip |
+| 3.3     | Testy jednostkowe metryk  | Dawid |
+| 3.4     | Walidacja na małej próbce | Filip |
 
 #### Tydzień 4: Eksperymenty - część 1
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 4.1 | Eksperymenty ChatGPT | Filip |
-| 4.2 | Eksperymenty Mistral | Dawid |
-| 4.3 | Obliczanie metryk | Filip |
+| Zadanie | Opis                 | Osoba |
+| ------- | -------------------- | ----- |
+| 4.1     | Eksperymenty ChatGPT | Filip |
+| 4.2     | Eksperymenty Mistral | Dawid |
+| 4.3     | Obliczanie metryk    | Filip |
 
 #### Tydzień 5: Eksperymenty - część 2
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 5.1 | Eksperymenty Llama | Dawid |
-| 5.2 | Obliczanie metryk | Filip |
-| 5.3 | Konsolidacja danych | Dawid |
+| Zadanie | Opis                | Osoba |
+| ------- | ------------------- | ----- |
+| 5.1     | Eksperymenty Llama  | Dawid |
+| 5.2     | Obliczanie metryk   | Filip |
+| 5.3     | Konsolidacja danych | Dawid |
 
 #### Tydzień 6: Analiza statystyczna
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 6.1 | Testy statystyczne | Filip |
-| 6.2 | Generowanie wykresów | Dawid |
-| 6.3 | Analiza korelacji | Filip |
+| Zadanie | Opis                 | Osoba |
+| ------- | -------------------- | ----- |
+| 6.1     | Testy statystyczne   | Filip |
+| 6.2     | Generowanie wykresów | Dawid |
+| 6.3     | Analiza korelacji    | Filip |
 
 #### Tydzień 7: Dokumentacja
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 7.1 | Sprawozdanie | Filip |
-| 7.2 | Dokumentacja techniczna | Dawid |
-| 7.3 | README | Filip |
+| Zadanie | Opis                    | Osoba |
+| ------- | ----------------------- | ----- |
+| 7.1     | Sprawozdanie            | Filip |
+| 7.2     | Dokumentacja techniczna | Dawid |
+| 7.3     | README                  | Filip |
 
 #### Tydzień 8: Prezentacja
 
-| Zadanie | Opis | Osoba |
-|---------|------|-------|
-| 8.1 | Slajdy | Filip + Dawid |
-| 8.2 | Demo | Dawid |
-| 8.3 | Próba prezentacji | Filip + Dawid |
-| 8.4 | Finalne poprawki | Filip |
+| Zadanie | Opis              | Osoba         |
+| ------- | ----------------- | ------------- |
+| 8.1     | Slajdy            | Filip + Dawid |
+| 8.2     | Demo              | Dawid         |
+| 8.3     | Próba prezentacji | Filip + Dawid |
+| 8.4     | Finalne poprawki  | Filip         |
 
 ---
 
 ## 8. Analiza ryzyka
 
-| Ryzyko | Prawdopodobieństwo | Waga | Minimalizacja ryzyka |
-|--------|---|---|------------|
-| Modele nie mieszczą się w RAM | Ś | W | Quantization, mniejsze modele |
-| Czas inferencji zbyt długi | W | Ś | Równoległe przetwarzanie |
-| Błędy w parsowaniu odpowiedzi | W | Ś | Robust parsing |
-| Brak istotności statystycznej | N | W | Duża próbka |
-| Opóźnienia w harmonogramie | Ś | Ś | Bufory czasowe |
-
+| Ryzyko                        | Prawdopodobieństwo | Waga | Minimalizacja ryzyka          |
+| ----------------------------- | ------------------ | ---- | ----------------------------- |
+| Modele nie mieszczą się w RAM | Ś                  | W    | Quantization, mniejsze modele |
+| Czas inferencji zbyt długi    | W                  | Ś    | Równoległe przetwarzanie      |
+| Błędy w parsowaniu odpowiedzi | W                  | Ś    | Robust parsing                |
+| Brak istotności statystycznej | N                  | W    | Duża próbka                   |
+| Opóźnienia w harmonogramie    | Ś                  | Ś    | Bufory czasowe                |
 
 N - niskie
 Ś - średnie
 W - wysokie
+
 ---
 
 ## 9. Podsumowanie
@@ -351,11 +355,12 @@ Projekt bada wpływ promptów na stabilność wyników testów osobowościowych 
 
 ## 11. Bibliografia
 
-1. Brown, T. B., et al. (2020). "Language Models are Few-Shot Learners." *NeurIPS 2020*. https://arxiv.org/abs/2005.14165
+1. Brown, T. B., et al. (2020). "Language Models are Few-Shot Learners." _NeurIPS 2020_. <https://arxiv.org/abs/2005.14165>
 
-2. Huang, J., et al. (2023). "Revisiting the Reliability of Psychological Scales on Large Language Models." *arXiv*. https://arxiv.org/abs/2305.19926
+2. Huang, J., et al. (2023). "Revisiting the Reliability of Psychological Scales on Large Language Models." _arXiv_. <https://arxiv.org/abs/2305.19926>
 
-3. Rammstedt, B., & John, O. P. (2007). "Measuring personality in one minute or less." *Journal of Research in Personality*, 41(1), 203-212. https://doi.org/10.1016/j.jrp.2006.02.001
+3. Rammstedt, B., & John, O. P. (2007). "Measuring personality in one minute or less." _Journal of Research in Personality_, 41(1), 203-212. <https://doi.org/10.1016/j.jrp.2006.02.001>
 
-4. Serapio-García, G., et al. (2023). "Personality Traits in Large Language Models." *arXiv*. https://arxiv.org/abs/2307.00184
+4. Serapio-García, G., et al. (2023). "Personality Traits in Large Language Models." _arXiv_. <https://arxiv.org/abs/2307.00184>
 
+5. Shu, B., et al. (2023). "You don't need a personality test to know these models are unreliable." _arXiv_. <https://arxiv.org/abs/2311.09718>
