@@ -1,17 +1,35 @@
-# SIWY
+# SIWY - Wpływ promptów na stabilność cech zachowania w LLM
 
-**Wyjaśnialna Sztuczna Inteligencja** 
+## Struktura projektu
 
-## Temat
+```
+siwy/
+├── prompts/         # Kwestionariusz BFI-10 i szablony promptów
+├── models/          # Ładowanie modeli (ChatGPT, Mistral, Llama)
+├── inference/       # Parsowanie odpowiedzi modelu
+├── experiments/     # Runner eksperymentów i agregacja metryk
+├── metrics/         # Metryki stabilności i semantyczne
+├── data/            # Schematy danych
+pyproject.toml
+```
 
-Wpływ promptów na stabilność cech zachowania w modelach językowych: analiza powtarzalności odpowiedzi w testach osobowości.
+## Użycie
 
-## Dokumentacja
+```bash
+uv sync
+uv run python -m siwy.experiments.run
+```
 
-- [Dokument projektu](design_proposal.md)
+## Metryki
 
-## Członkowie zespołu
+- **Fleiss' κ** - zgodność między powtórzeniami
+- **Krippendorff α** - uogólnienie kappa
+- **Entropia Shannona** - niepewność odpowiedzi
+- **Odchylenie standardowe** - stabilność per pytanie
+- **Cosine similarity** - podobieństwo semantyczne
+- **Levenshtein** - odległość edycyjna
 
-- Filip Budzyński, 319021
-- Dawid Budzyński, 319020
+## Modele i prompty
 
+- Modele: ChatGPT, Mistral 7B, Llama 3.1 8B
+- Prompty: baseline, few-shot, format-constrained

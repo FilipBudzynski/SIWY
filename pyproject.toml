@@ -1,0 +1,33 @@
+[project]
+name = "siwy"
+version = "0.1.0"
+description = "Wpływ promptów na stabilność cech zachowania w modelach językowych"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.3",
+    "transformers>=4.40",
+    "openai>=1.0",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scipy>=1.13",
+    "scikit-learn>=1.5",
+    "sentence-transformers>=2.5",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "black>=24.0",
+    "ruff>=0.3",
+]
+
+[tool.setuptools.packages.find]
+where = ["siwy"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100

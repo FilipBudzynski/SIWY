@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Results (optional - can be regenerated)
+*.json
+!docs/*.json
+
+# OS
+.DS_Store
+
+# Slides / docs that are generated elsewhere
+slides/
+docs/design_*.md
+plan.md
+regulamin_*.pdf
