@@ -4,10 +4,11 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.pytest_cache/
 
 # Results (optional - can be regenerated)
-*.json
-!docs/*.json
+results/*.json
+!results/.gitkeep
 
 # OS
 .DS_Store

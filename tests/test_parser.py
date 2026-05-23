@@ -20,3 +20,14 @@ def test_parse_partial():
 
 def test_rejects_out_of_range():
     assert parse_ratings("1,2,3,4,5,6,7,8,9,10") is None
+
+
+def test_parse_inline_labeled():
+    assert parse_ratings("1: 5, 2: 2, 3: 5, 4: 3, 5: 4, 6: 5, 7: 5, 8: 2, 9: 4, 10: 3") == [
+        5, 2, 5, 3, 4, 5, 5, 2, 4, 3
+    ]
+
+
+def test_parse_labeled_with_annotation():
+    raw = "1: 4 (Agree moderately)\n2: 2 (Disagree moderately)\n3: 5\n4: 4\n5: 5\n6: 5\n7: 5\n8: 1\n9: 3\n10: 2"
+    assert parse_ratings(raw) == [4, 2, 5, 4, 5, 5, 5, 1, 3, 2]

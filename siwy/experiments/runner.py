@@ -15,12 +15,14 @@ class ExperimentRunner:
         repetitions: int = 10,
         temperature: float = 0.7,
         base_seed: int = 42,
+        inter_call_delay: float = 0.0,
     ):
         self.models = models
         self.prompt_types = prompt_types
         self.repetitions = repetitions
         self.temperature = temperature
         self.base_seed = base_seed
+        self.inter_call_delay = inter_call_delay
         self._loaded_models: dict[ModelName, Model] = {}
 
     def _get_model(self, model_name: ModelName) -> Model:
@@ -52,9 +54,12 @@ class ExperimentRunner:
         )
 
     def run_all(self) -> Generator[ExperimentResult, None, None]:
+        import time as _time
         for model, prompt in product(self.models, self.prompt_types):
             for rep in range(self.repetitions):
                 seed = self.base_seed + rep
                 result = self.run_single(model, prompt, rep, seed=seed)
                 yield result
-                print(f"Done: {model.value} | {prompt.value} | rep {rep}")
+                ok = "ok" if result.parse_success else "PARSE_FAIL"
+                print(f"Done: {model.value} | {prompt.value} | rep {rep} [{ok}]")
+                _time.sleep(self.inter_call_delay)
