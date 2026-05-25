@@ -45,10 +45,11 @@ def get_dimensions() -> dict[str, list[int]]:
     }
 
 
-def questions_to_text() -> str:
+def questions_to_text(numbered: bool = True) -> str:
     lines = []
     for q in BFI10_QUESTIONS:
-        lines.append(f"{q.id}. {q.statement}")
+        prefix = f"{q.id}. " if numbered else "- "
+        lines.append(f"{prefix}{q.statement}")
     return "\n".join(lines)
 
 

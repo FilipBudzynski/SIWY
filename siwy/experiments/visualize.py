@@ -1,11 +1,3 @@
-"""Visualization for BFI-10 stability experiments.
-
-Generates three plots and a combined dashboard:
-  1. Fleiss kappa vs temperature, per (model, prompt) — temperature effect.
-  2. Mean Fleiss kappa per prompt (averaged across models) — prompt effect.
-  3. Final ranking of (model, prompt) configurations at the reference temperature.
-"""
-
 import json
 import os
 from collections import defaultdict
@@ -25,8 +17,7 @@ MODEL_MARKERS = {"mistral": "o", "llama3.1": "s", "gpt-oss": "^"}
 
 
 def _load_summaries(paths: list[str]) -> list[dict]:
-    """Load and flatten summary JSONs into a list of row dicts."""
-    rows = []
+    by_key: dict[tuple, dict] = {}
     for p in paths:
         if not os.path.exists(p):
             continue
@@ -35,12 +26,12 @@ def _load_summaries(paths: list[str]) -> list[dict]:
         for _, v in d.items():
             if v.get("n_successful", 0) == 0:
                 continue
-            rows.append(v)
-    return rows
+            key = (v["model_name"], v["prompt_type"], v["temperature"])
+            by_key[key] = v
+    return list(by_key.values())
 
 
 def plot_temperature_effect(rows: list[dict], out_path: str) -> None:
-    """One subplot per model; lines per prompt; x = temperature, y = Fleiss κ."""
     by_model = defaultdict(lambda: defaultdict(list))  # model -> prompt -> [(T, κ)]
     for r in rows:
         by_model[r["model_name"]][r["prompt_type"]].append(
@@ -81,7 +72,6 @@ def plot_temperature_effect(rows: list[dict], out_path: str) -> None:
 
 
 def plot_prompt_effect(rows: list[dict], out_path: str, ref_temp: float = 0.7) -> None:
-    """Two-panel: (left) mean κ per prompt across all (model, T); (right) κ per prompt at ref temp."""
     by_prompt_all = defaultdict(list)
     by_prompt_ref = defaultdict(list)
     for r in rows:
@@ -91,7 +81,6 @@ def plot_prompt_effect(rows: list[dict], out_path: str, ref_temp: float = 0.7) -
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
 
-    # Left: aggregate over all (model, T)
     means_all = [np.mean(by_prompt_all[p]) for p in PROMPT_ORDER]
     stds_all = [np.std(by_prompt_all[p]) for p in PROMPT_ORDER]
     colors = [PROMPT_COLORS[p] for p in PROMPT_ORDER]
@@ -104,7 +93,6 @@ def plot_prompt_effect(rows: list[dict], out_path: str, ref_temp: float = 0.7) -
     axes[0].set_ylim(0, 1.1)
     axes[0].grid(True, alpha=0.3, axis="y")
 
-    # Right: per-model bars at ref temp
     x = np.arange(len(PROMPT_ORDER))
     width = 0.25
     models_present = sorted(
@@ -135,7 +123,6 @@ def plot_prompt_effect(rows: list[dict], out_path: str, ref_temp: float = 0.7) -
 
 
 def plot_ranking(rows: list[dict], out_path: str, ref_temp: float = 0.7) -> None:
-    """Horizontal bar chart ranking (model, prompt) configurations at ref_temp."""
     at_ref = [r for r in rows if abs(r["temperature"] - ref_temp) < 1e-6]
     at_ref.sort(key=lambda r: r["stability_fleiss_kappa"])
 
@@ -176,9 +163,13 @@ if __name__ == "__main__":
         "results/results_tmptr_5_summary.json",
         "results/results_summary.json",
         "results/results_tmptr_10_summary.json",
-        "results/results_gpt_oss_summary.json",
         "results/results_gpt_oss_temp_0.3_summary.json",
         "results/results_gpt_oss_temp_0.5_summary.json",
+        "results/results_gpt_oss_summary.json",
         "results/results_gpt_oss_temp_1.0_summary.json",
+        "results/results_fc_fixed_T0.3_summary.json",
+        "results/results_fc_fixed_T0.5_summary.json",
+        "results/results_fc_fixed_T0.7_summary.json",
+        "results/results_fc_fixed_T1.0_summary.json",
     ]
     generate_all(default_paths)
