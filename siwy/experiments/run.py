@@ -1,4 +1,5 @@
 import json
+import os
 from siwy.experiments.runner import ExperimentRunner
 from siwy.experiments.aggregate import aggregate_results
 from siwy.models.loader import ModelName
@@ -6,12 +7,13 @@ from siwy.prompts.templates import PromptType
 
 
 def run_experiments(
-    output_path: str = "results.json",
+    output_path: str = "results/results.json",
     models: list[ModelName] | None = None,
     prompt_types: list[PromptType] | None = None,
     repetitions: int = 10,
     temperature: float = 1.0,
     base_seed: int = 42,
+    inter_call_delay: float = 0.0,
 ):
     if models is None:
         models = [ModelName.MISTRAL, ModelName.LLAMA]
@@ -24,10 +26,15 @@ def run_experiments(
         repetitions=repetitions,
         temperature=temperature,
         base_seed=base_seed,
+        inter_call_delay=inter_call_delay,
     )
     
     results = list(runner.run_all())
-    
+
+    output_dir = os.path.dirname(output_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
     with open(output_path, "w") as f:
         json.dump(
             [
@@ -72,5 +79,5 @@ def run_experiments(
 
 if __name__ == "__main__":
     import sys
-    output = sys.argv[1] if len(sys.argv) > 1 else "results.json"
+    output = sys.argv[1] if len(sys.argv) > 1 else "results/results.json"
     run_experiments(output)

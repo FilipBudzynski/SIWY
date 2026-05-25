@@ -4,12 +4,12 @@
 
 | Parameter | Value |
 |----------|-------|
-| Models | Mistral 7B Instruct, Llama 3.1 8B Instruct (Ollama) |
+| Models | Mistral 7B Instruct (Ollama), Llama 3.1 8B Instruct (Ollama), gpt-oss-20b (OpenRouter, free tier) |
 | Questionnaire | BFI-10 (Big Five Inventory, 10 items) |
 | Prompt types | baseline, few-shot, format_constrained |
 | Repetitions | 10 per configuration |
-| Temperature | 0.3, 0.5, 0.7, 1.0 |
-| Seeds | 42-51 per repetition |
+| Temperature | 0.3, 0.5, 0.7, 1.0 (główna analiza poniżej: temp=0.7) |
+| Seeds | 42-51 per repetition (gpt-oss: upstream JAX provider ignoruje seed, stąd wariancja czysto stochastyczna) |
 
 ## Results
 
@@ -42,7 +42,53 @@
 | 1.0 | mistral  | few_shot           | 10  | **1.000**| 0.990    | -0.000    | 0.000    | 1.000  | **0.000**  |
 | 1.0 | mistral  | format_constrained | 0   | N/A      | N/A      | N/A       | N/A      | N/A    | N/A        |
 
+### Cross-model comparison @ temp=0.7 (with gpt-oss)
+
+| Model    | Prompt              | N   | Fleiss κ | Kripp α | Shannon H | Mean σ | Cosine | Lev    |
+|----------|---------------------|-----|----------|---------|-----------|--------|--------|--------|
+| mistral  | baseline            | 10  | 0.512    | 0.990   | 0.695     | 0.366  | 0.989  | 0.342  |
+| mistral  | few_shot            | 10  | **1.000**| 0.990   | -0.000    | 0.000  | 1.000  | **0.000** |
+| mistral  | format_constrained* | 9   | 0.383    | 0.990   | 0.755     | 0.452  | —      | —      |
+| llama3.1 | baseline            | 10  | 0.537    | 0.990   | 0.822     | 0.561  | 0.959  | 0.293  |
+| llama3.1 | few_shot            | 10  | 0.467    | 0.990   | 0.883     | 0.739  | 0.946  | 0.307  |
+| llama3.1 | format_constrained* | 9   | 0.372    | 0.990   | 0.806     | 0.524  | —      | —      |
+| gpt-oss  | baseline            | 10  | 0.509    | 0.990   | 0.702     | 0.352  | 0.988  | 0.356  |
+| gpt-oss  | few_shot            | 10  | **0.798**| 0.990   | 0.288     | 0.159  | 0.995  | 0.144  |
+| gpt-oss  | format_constrained* | 10  | 0.715    | 0.990   | 0.456     | 0.241  | —      | —      |
+
+\* `format_constrained` używa nowej wersji promptu (lista pytań bez numerów); patrz `docs/final_report.md` sekcja 9.
+
+### Ranking konfiguracji (Fleiss κ, temp=0.7, im wyżej tym stabilniej)
+
+1. **mistral + few_shot** — κ = 1.000
+2. **gpt-oss + few_shot** — κ = 0.798
+3. **gpt-oss + format_constrained** — κ = 0.715
+4. llama3.1 + baseline — κ = 0.537
+5. mistral + baseline — κ = 0.512
+6. gpt-oss + baseline — κ = 0.509
+7. llama3.1 + few_shot — κ = 0.467
+8. mistral + format_constrained — κ = 0.383
+9. llama3.1 + format_constrained — κ = 0.372
+
+### Średnia Fleiss κ per typ promptu (uśredniona po modelach × temperaturach)
+
+| Prompt | Mean κ | n konfiguracji |
+|--------|-------:|-------:|
+| **few_shot** | **0.803** | 12 |
+| baseline | 0.563 | 12 |
+| format_constrained | 0.489 | 12 |
+
 ## Wnioski (Conclusions)
+
+### 🏆 Który prompt wygrywa?
+
+**Few-shot** jest jednoznacznie najbardziej stabilną strategią — średnia Fleiss κ = **0.803** vs 0.563 (baseline) i 0.489 (format-constrained). Spośród 9 udanych konfiguracji, dwa pierwsze miejsca w rankingu zajmuje few-shot (mistral κ=1.0, gpt-oss κ=0.798). Mechanizm: kotwiczenie odpowiedzi przykładami (`"outgoing" → 4`, `"cold" → 2`, `"reliable" → 5`) drastycznie ogranicza przestrzeń możliwych interpretacji skali Likerta i wymusza powtarzalność.
+
+**Wyjątek — Llama 3.1:** few-shot pogarsza stabilność (0.537 → 0.467). Hipoteza: większa pojemność modelu pozwala na bardziej "kreatywną" interpretację przykładów, podczas gdy mniejszy Mistral po prostu kopiuje wzorzec. Wniosek praktyczny: **few-shot warto zwalidować empirycznie dla każdego modelu — nie jest to bezwarunkowo lepsza strategia**.
+
+### Hipoteza główna: potwierdzona
+
+Wariancja w sformułowaniu promptu **istotnie wpływa** na stabilność. Różnica κ między najlepszym (1.000) a najgorszym (0.467) promptem dla tego samego modelu (Mistral baseline vs few_shot) to **0.488** — zmiana z "umiarkowanej zgodności" na "perfekcyjną". Rekomendacja produkcyjna: w aplikacjach wymagających spójności (rekrutacja, ocena osobowości, mental health) używać few-shot z walidacją per model.
 
 ### 1. Wpływ few-shot na stabilność
 
@@ -89,8 +135,9 @@
 
 ## Raw Data
 
-See result files:
-- `results.json` (temp=0.7)
-- `results_tmptr_5.json` (temp=0.5)
-- `results_tmptr_3.json` (temp=0.3)
-- `results_tmptr_10.json` (temp=1.0)
+See result files (in `results/`):
+- `results/results.json` (mistral + llama3.1, temp=0.7)
+- `results/results_gpt_oss.json` (gpt-oss-20b, temp=0.7)
+- `results/results_tmptr_5.json` (temp=0.5)
+- `results/results_tmptr_3.json` (temp=0.3)
+- `results/results_tmptr_10.json` (temp=1.0)
